@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Привет 👋</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    background: linear-gradient(135deg, #2b0a1e 0%, #4a1035 50%, #2b0a1e 100%);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow: hidden;
+    padding: 20px;
+    padding-top: calc(20px + env(safe-area-inset-top));
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    padding-left: calc(20px + env(safe-area-inset-left));
+    padding-right: calc(20px + env(safe-area-inset-right));
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255, 77, 148, 0.25), transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: pulse 4s ease-in-out infinite;
+    z-index: 0;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.15); }
+  }
+
+  /* ---------- ЭКРАН 1 ---------- */
+  .screen-1 {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .screen-1.hide {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+    pointer-events: none;
+    position: absolute;
+  }
+
+  .greeting {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 800;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #ff8fc7, #ff4d94, #ffc2e0, #ff4d94, #ff8fc7);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation:
+      gradientShift 4s ease infinite,
+      floatIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+      float 3s ease-in-out 1s infinite;
+    text-align: center;
+    text-shadow: 0 0 50px rgba(255, 77, 148, 0.5);
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+  }
+
+  @keyframes floatIn {
+    0%   { opacity: 0; transform: translateY(-40px) scale(0.8); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+  }
+
+  .btn {
+    position: relative;
+    padding: 16px 48px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+    background: linear-gradient(135deg, #ff4d94, #ff8fc7);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.3s ease;
+    box-shadow: 0 10px 30px rgba(255, 77, 148, 0.6);
+    touch-action: manipulation;
+  }
+
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 45px rgba(255, 77, 148, 0.85);
+  }
+
+  .btn:active {
+    transform: scale(0.92) translateY(0);
+    box-shadow: 0 5px 15px rgba(255, 77, 148, 0.5);
+    transition: transform 0.08s ease;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    transition: left 0.6s ease;
+  }
+
+  .btn:hover::before { left: 100%; }
+
+  .btn .ripple,
+  .choice-btn .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.7);
+    transform: scale(0);
+    animation: rippleAnim 0.6s ease-out;
+    pointer-events: none;
+  }
+
+  @keyframes rippleAnim {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  /* ---------- ЭКРАН 2 ---------- */
+  .screen-2 {
+    position: relative;
+    z-index: 1;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    opacity: 0;
+    width: 100%;
+  }
+
+  .screen-2.show {
+    display: flex;
+    animation: screen2In 0.6s ease forwards;
+  }
+
+  @keyframes screen2In {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .letter-title {
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 700;
+    color: #ffc2e0;
+    letter-spacing: 1px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: titleIn 0.7s 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    text-shadow: 0 0 25px rgba(255, 77, 148, 0.7);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .letter-title.hide {
+    opacity: 0 !important;
+    transform: translateY(-30px) !important;
+    animation: none;
+  }
+
+  @keyframes titleIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ---------- 3D-СЦЕНА ---------- */
+  .scene {
+    position: relative;
+    width: min(520px, 92vw);
+    aspect-ratio: 3 / 2;
+    perspective: 1600px;
+    perspective-origin: 50% 40%;
+    z-index: 2;
+  }
+
+  .envelope-3d {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    animation:
+      envelopeIn 0.9s 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+      envelopeFloat 3s ease-in-out 1.5s infinite;
+    transition: transform 0.4s ease, opacity 1.2s ease;
+    touch-action: manipulation;
+  }
+
+  @keyframes envelopeIn {
+    0% { opacity: 0; transform: translateY(60px) scale(0.6) rotateZ(-8deg); }
+    60% { transform: translateY(-10px) scale(1.05) rotateZ(3deg); }
+    100% { opacity: 1; transform: translateY(0) scale(1) rotateZ(0); }
+  }
+
+  @keyframes envelopeFloat {
+    0%, 100% { transform: translateY(0) rotateZ(0); }
+    50%      { transform: translateY(-8px) rotateZ(-1deg); }
+  }
+
+  .envelope-3d.opened { animation: none; }
+  .envelope-3d.fade-out { cursor: default; pointer-events: none; }
+
+  .envelope-3d.fade-out .env-back,
+  .envelope-3d.fade-out .env-front,
+  .envelope-3d.fade-out .env-right,
+  .envelope-3d.fade-out .env-flap {
+    opacity: 0;
+    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.6, 1);
+  }
+
+  .envelope-3d.fade-out .env-flap {
+    transform: rotateX(-180deg) translateZ(2px);
+  }
+
+  /* ---------- ЗАДНЯЯ СТЕНКА ---------- */
+  .env-back {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, #d63b7c, #b81e5d);
+    border-radius: 16px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55), 0 10px 20px rgba(0, 0, 0, 0.3);
+    transform: translateZ(-2px);
+    overflow: hidden;
+    transition: opacity 1.2s ease;
+  }
+
+  .env-back::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.35), transparent 70%),
+      radial-gradient(ellipse at 50% 0%, rgba(0,0,0,0.25), transparent 60%);
+  }
+
+  .env-back::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, rgba(0,0,0,0.25), transparent 25%),
+      linear-gradient(to left, rgba(0,0,0,0.25), transparent 25%);
+    border-radius: 16px;
+  }
+
+  /* ---------- БУМАЖКА ---------- */
+  .letter-paper {
+    position: absolute;
+    left: 5%;
+    bottom: 6%;
+    width: 90%;
+    height: 90%;
+    background: linear-gradient(180deg, #fff8fb 0%, #ffe9f2 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+    transform: translateZ(1px) translateY(0) scale(1);
+    transform-origin: center center;
+    transition: transform 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.7s,
+                box-shadow 1.4s ease 1.4s;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 34px;
+    text-align: center;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .letter-paper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 35px,
+      rgba(255, 143, 199, 0.28) 35px,
+      rgba(255, 143, 199, 0.28) 36px
+    );
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .envelope-3d.opened .letter-paper {
+    transform: translateZ(60px) translateY(-22%) scale(1.25);
+    box-shadow: 0 35px 70px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+  }
+
+  /* ---------- ПЕРЕДНИЙ КАРМАН ---------- */
+  .env-front {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    transition: opacity 1.2s ease;
+  }
+
+  .env-front::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, #ff4d94, #ff7eb5);
+    clip-path: polygon(0 100%, 50% 45%, 100% 100%);
+    border-radius: 0 0 16px 16px;
+    box-shadow: inset 0 -8px 20px rgba(0,0,0,0.15);
+  }
+
+  .env-front::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, #ff5fa2, #ff4d94);
+    clip-path: polygon(0 0, 0 100%, 55% 55%);
+    border-radius: 16px 0 0 16px;
+    opacity: 0.95;
+  }
+
+  .env-right {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(240deg, #ff5fa2, #ff4d94);
+    clip-path: polygon(100% 0, 100% 100%, 45% 55%);
+    border-radius: 0 16px 16px 0;
+    opacity: 0.95;
+    z-index: 3;
+    pointer-events: none;
+    transition: opacity 1.2s ease;
+  }
+
+  /* ---------- ВЕРХНЯЯ СТВОРКА ---------- */
+  .env-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 58%;
+    transform-origin: top center;
+    transform-style: preserve-3d;
+    transform: rotateX(0deg) translateZ(2px);
+    transition: transform 1.4s cubic-bezier(0.45, 0.05, 0.15, 1);
+    z-index: 5;
+    will-change: transform;
+  }
+
+  .env-flap-inner {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #ff7eb5, #ff4d94);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    border-radius: 16px 16px 0 0;
+    box-shadow: inset 0 4px 12px rgba(255,255,255,0.25);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: rotateX(0deg);
+  }
+
+  .env-flap-back {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #b81e5d, #d63b7c);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    border-radius: 16px 16px 0 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: rotateX(180deg);
+    box-shadow: inset 0 -6px 14px rgba(0,0,0,0.3);
+  }
+
+  .envelope-3d.opened .env-flap {
+    transform: rotateX(-180deg) translateZ(2px);
+    z-index: 1;
+  }
+
+  /* ---------- ШТАМП ---------- */
+  .stamp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-12deg) scale(0);
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #ff4d94, #b81e5d);
+    border: 4px dashed rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    box-shadow:
+      0 0 0 4px rgba(255, 255, 255, 0.25),
+      0 12px 30px rgba(0, 0, 0, 0.5),
+      inset 0 0 25px rgba(255, 255, 255, 0.25);
+    z-index: 6;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+    animation:
+      stampIn 0.7s 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+      stampPulse 2s 2.2s ease-in-out infinite;
+    transition: transform 0.6s ease, opacity 0.6s ease;
+  }
+
+  .stamp::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+  }
+
+  @keyframes stampIn {
+    0%   { transform: translate(-50%, -50%) rotate(-12deg) scale(0); }
+    70%  { transform: translate(-50%, -50%) rotate(-12deg) scale(1.15); }
+    100% { transform: translate(-50%, -50%) rotate(-12deg) scale(1); }
+  }
+
+  @keyframes stampPulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(255,255,255,0.25), 0 12px 30px rgba(0,0,0,0.5), inset 0 0 25px rgba(255,255,255,0.25), 0 0 0 0 rgba(255, 77, 148, 0.7); }
+    50%      { box-shadow: 0 0 0 4px rgba(255,255,255,0.25), 0 12px 30px rgba(0,0,0,0.5), inset 0 0 25px rgba(255,255,255,0.25), 0 0 0 22px rgba(255, 77, 148, 0); }
+  }
+
+  .envelope-3d.opened .stamp {
+    animation: stampOut 0.6s ease forwards;
+  }
+
+  @keyframes stampOut {
+    to { transform: translate(-50%, -50%) rotate(-12deg) scale(0.3); opacity: 0; }
+  }
+
+  /* ---------- ТЕКСТ ПИСЬМА ---------- */
+  .letter-paper h3 {
+    position: relative;
+    z-index: 1;
+    font-size: clamp(1.1rem, 3.4vw, 1.5rem);
+    color: #c91b63;
+    margin-bottom: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.9s 2s ease, transform 0.9s 2s ease;
+  }
+
+  .letter-paper p {
+    position: relative;
+    z-index: 1;
+    color: #a0194e;
+    font-size: clamp(0.85rem, 2.6vw, 1rem);
+    line-height: 1.55;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.9s 2.3s ease, transform 0.9s 2.3s ease;
+    max-width: 92%;
+  }
+
+  .letter-paper .signature {
+    position: relative;
+    z-index: 1;
+    margin-top: 16px;
+    font-style: italic;
+    color: #c91b63;
+    font-weight: 700;
+    font-size: clamp(0.9rem, 2.8vw, 1.05rem);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.9s 2.6s ease, transform 0.9s 2.6s ease;
+  }
+
+  .envelope-3d.opened .letter-paper h3,
+  .envelope-3d.opened .letter-paper p,
+  .envelope-3d.opened .letter-paper .signature {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Анимация смены текста */
+  .letter-paper.swap-out h3,
+  .letter-paper.swap-out p,
+  .letter-paper.swap-out .signature {
+    opacity: 0 !important;
+    transform: translateY(-15px) !important;
+    transition: opacity 0.5s ease, transform 0.5s ease !important;
+  }
+
+  .letter-paper.swap-in h3,
+  .letter-paper.swap-in p,
+  .letter-paper.swap-in .signature {
+    animation: swapIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .letter-paper.swap-in h3 { animation-delay: 0s; }
+  .letter-paper.swap-in p { animation-delay: 0.18s; }
+  .letter-paper.swap-in .signature { animation-delay: 0.36s; }
+
+  @keyframes swapIn {
+    0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Сердечки */
+  .heart {
+    position: absolute;
+    font-size: 1.2rem;
+    opacity: 0;
+    z-index: 1;
+    transition: opacity 0.9s 2.8s ease;
+  }
+  .envelope-3d.opened .heart { opacity: 0.85; }
+
+  .heart.h1 { top: 14px; right: 18px; animation: heartFloat 3s ease-in-out infinite; }
+  .heart.h2 { bottom: 16px; left: 20px; animation: heartFloat 3s 0.6s ease-in-out infinite; }
+
+  @keyframes heartFloat {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50%      { transform: translateY(-6px) rotate(8deg); }
+  }
+
+  /* ---------- ПОДСКАЗКА ---------- */
+  .hint {
+    font-size: 0.95rem;
+    color: rgba(255, 194, 224, 0.7);
+    letter-spacing: 1px;
+    animation: hintPulse 2s ease-in-out infinite;
+    transition: opacity 0.6s ease;
+  }
+
+  .hint.hide {
+    opacity: 0 !important;
+    animation: none;
+  }
+
+  @keyframes hintPulse {
+    0%, 100% { opacity: 0.5; }
+    50%      { opacity: 1; }
+  }
+
+  /* ---------- КНОПКИ ---------- */
+  .choice-buttons {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    transform: translateY(30px);
+    pointer-events: none;
+    transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 5;
+    margin-top: 40px;
+  }
+
+  .choice-buttons.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .choice-buttons.hide {
+    opacity: 0 !important;
+    transform: translateY(-20px) !important;
+    pointer-events: none !important;
+    transition: opacity 0.6s ease, transform 0.6s ease !important;
+  }
+
+  .choice-buttons.gone {
+    display: none !important;
+  }
+
+  .choice-btn {
+    position: relative;
+    padding: 14px 44px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    touch-action: manipulation;
+  }
+
+  .choice-buttons.show .choice-btn {
+    animation: btnBounceIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .btn-when {
+    background: linear-gradient(135deg, #a855f7, #c084fc);
+    box-shadow: 0 10px 30px rgba(168, 85, 247, 0.6);
+    padding: 16px 52px;
+    font-size: 1.15rem;
+  }
+
+  .choice-buttons.show .btn-when { animation-delay: 0.2s; }
+
+  .btn-when:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 18px 45px rgba(168, 85, 247, 0.9);
+  }
+
+  .btn-when:active {
+    transform: scale(0.92);
+    box-shadow: 0 5px 15px rgba(168, 85, 247, 0.5);
+    transition: transform 0.08s ease;
+  }
+
+  .btn-when::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7);
+    animation: whenPulse 2s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes whenPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7); }
+    70%  { box-shadow: 0 0 0 20px rgba(168, 85, 247, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); }
+  }
+
+  .btn-when::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+    transform: skewX(-20deg);
+    animation: shine 3s 1.5s infinite;
+    pointer-events: none;
+  }
+
+  .btn-yes {
+    background: linear-gradient(135deg, #22c55e, #4ade80);
+    box-shadow: 0 10px 30px rgba(34, 197, 94, 0.6);
+  }
+
+  .choice-buttons.show .btn-yes { animation-delay: 0.2s; }
+
+  .btn-yes:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 18px 45px rgba(34, 197, 94, 0.9);
+  }
+
+  .btn-yes:active {
+    transform: scale(0.92);
+    box-shadow: 0 5px 15px rgba(34, 197, 94, 0.5);
+    transition: transform 0.08s ease;
+  }
+
+  .btn-yes::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    animation: yesPulse 2s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes yesPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+    70%  { box-shadow: 0 0 0 20px rgba(34, 197, 94, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+  }
+
+  .btn-yes::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+    transform: skewX(-20deg);
+    animation: shine 3s 1.5s infinite;
+    pointer-events: none;
+  }
+
+  .btn-no {
+    background: linear-gradient(135deg, #ef4444, #f87171);
+    box-shadow: 0 10px 30px rgba(239, 68, 68, 0.6);
+  }
+
+  .choice-buttons.show .btn-no { animation-delay: 0.35s; }
+
+  .btn-no:hover {
+    transform: translateY(-3px) rotate(-2deg) scale(1.03);
+    box-shadow: 0 15px 40px rgba(239, 68, 68, 0.85);
+  }
+
+  .btn-no:active {
+    transform: scale(0.92);
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.5);
+    transition: transform 0.08s ease;
+  }
+
+  .btn-no:hover::after {
+    animation: shake 0.4s ease-in-out infinite;
+  }
+
+  .btn-no::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    pointer-events: none;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25%      { transform: translateX(-3px); }
+    75%      { transform: translateX(3px); }
+  }
+
+  @keyframes btnBounceIn {
+    0% { opacity: 0; transform: translateY(40px) scale(0.5); }
+    70% { transform: translateY(-6px) scale(1.08); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .choice-buttons.refresh .choice-btn {
+    animation: refreshBtn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .choice-buttons.refresh .btn-yes { animation-delay: 0.05s; }
+  .choice-buttons.refresh .btn-no { animation-delay: 0.15s; }
+
+  @keyframes refreshBtn {
+    0% { opacity: 1; transform: scale(1) rotate(0deg); }
+    30% { opacity: 0.6; transform: scale(0.8) rotate(-6deg); }
+    60% { opacity: 1; transform: scale(1.08) rotate(3deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+
+  @media (max-width: 768px) {
+    body { gap: 24px; padding: 16px; }
+    .screen-1 { gap: 30px; }
+    .btn { padding: 14px 40px; font-size: 1.1rem; }
+    .scene { width: min(460px, 92vw); }
+    .stamp { width: 120px; height: 120px; font-size: 1rem; border-width: 3px; }
+    .stamp::before { inset: 10px; }
+    .letter-paper { padding: 32px 26px; }
+    .envelope-3d.opened .letter-paper { transform: translateZ(60px) translateY(-20%) scale(1.22); }
+    .choice-buttons { margin-top: 30px; gap: 20px; }
+    .choice-btn { padding: 13px 38px; font-size: 1rem; }
+    .btn-when { padding: 14px 44px; font-size: 1rem; }
+  }
+
+  @media (max-width: 480px) {
+    body {
+      gap: 20px;
+      padding: 12px;
+      justify-content: flex-start;
+      padding-top: calc(40px + env(safe-area-inset-top));
+      overflow-y: auto;
+    }
+    .screen-1 { gap: 28px; padding-top: 20px; }
+    .greeting { letter-spacing: 1px; }
+    .btn { padding: 14px 36px; font-size: 1rem; }
+    .letter-title { padding: 0 10px; }
+    .scene { width: 94vw; }
+    .stamp {
+      width: 96px;
+      height: 96px;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      border-width: 3px;
+    }
+    .stamp::before { inset: 8px; }
+    .letter-paper { padding: 24px 20px; }
+    .letter-paper h3 { font-size: 1.05rem; margin-bottom: 10px; }
+    .letter-paper p { font-size: 0.8rem; line-height: 1.45; }
+    .letter-paper .signature { font-size: 0.85rem; margin-top: 12px; }
+    .envelope-3d.opened .letter-paper { transform: translateZ(60px) translateY(-18%) scale(1.15); }
+    .choice-buttons {
+      margin-top: 24px;
+      gap: 14px;
+      flex-direction: column;
+      width: 100%;
+      max-width: 320px;
+      padding: 0 12px;
+    }
+    .choice-btn { width: 100%; padding: 16px 20px; font-size: 1rem; letter-spacing: 1px; }
+    .btn-when { width: 100%; padding: 16px 20px; }
+    .heart { font-size: 1rem; }
+    .heart.h1 { top: 8px; right: 12px; }
+    .heart.h2 { bottom: 10px; left: 14px; }
+  }
+
+  @media (max-width: 360px) {
+    .greeting { font-size: 2rem; }
+    .stamp { width: 80px; height: 80px; font-size: 0.75rem; }
+    .letter-paper { padding: 18px 14px; }
+    .letter-paper h3 { font-size: 0.95rem; }
+    .letter-paper p  { font-size: 0.75rem; }
+  }
+
+  @media (hover: none) {
+    .btn:hover,
+    .btn-yes:hover,
+    .btn-no:hover,
+    .btn-when:hover,
+    .choice-btn:hover { transform: none; }
+    .btn:hover::before { left: -100%; }
+    .btn-no:hover::after { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ЭКРАН 1 -->
+  <div class="screen-1" id="screen1">
+    <h1 class="greeting">Привет 👋</h1>
+    <button class="btn" id="nextBtn">Далее →</button>
+  </div>
+
+  <!-- ЭКРАН 2 -->
+  <div class="screen-2" id="screen2">
+    <h2 class="letter-title" id="letterTitle">Смотри, тебе письмо пришло 💌</h2>
+
+    <div class="scene">
+      <div class="envelope-3d" id="envelope">
+
+        <div class="env-back"></div>
+
+        <div class="letter-paper" id="letterPaper">
+          <h3 id="letterHeading">Текст 0 (заменишь)</h3>
+          <p id="letterText">Текст 0 (заменишь)</p>
+          <span class="signature" id="letterSign">— Текст 0 (заменишь)</span>
+          <span class="heart h1">💗</span>
+          <span class="heart h2">✨</span>
+        </div>
+
+        <div class="env-front"></div>
+        <div class="env-right"></div>
+
+        <div class="env-flap">
+          <div class="env-flap-inner"></div>
+          <div class="env-flap-back"></div>
+        </div>
+
+        <div class="stamp">Открыть</div>
+
+      </div>
+    </div>
+
+    <!-- Кнопки -->
+    <div class="choice-buttons" id="choiceButtons">
+      <button class="choice-btn btn-when" id="btnWhen">Когда? 📅</button>
+      <button class="choice-btn btn-yes" id="btnYes" style="display:none">Да 💚</button>
+      <button class="choice-btn btn-no" id="btnNo" style="display:none">Нет ❌</button>
+    </div>
+
+    <p class="hint" id="hint">Нажми на письмо ✉️</p>
+  </div>
+
+  <script>
+    // ============================================================
+    // 👇👇👇 ВСТАВЬ СЮДА СВОЙ URL ОТ WEBHOOK.SITE 👇👇👇
+    // ============================================================
+    const WEBHOOK_URL = 'https://webhook.site/caa225d8-c106-45c6-898e-0ac888b99481';
+    // ============================================================
+    // 👆👆👆 ЗАМЕНИ НА СВОЙ URL 👆👆👆
+    // ============================================================
+
+    // Уникальный ID пользователя (чтобы отличать друзей друг от друга)
+    let USER_ID = localStorage.getItem('userId');
+    if (!USER_ID) {
+      USER_ID = 'user_' + Math.random().toString(36).substring(2, 10);
+      localStorage.setItem('userId', USER_ID);
+    }
+
+    // Функция отправки клика на Webhook
+    function logClick(buttonName) {
+      const data = {
+        user: USER_ID,
+        button: buttonName,
+        time: new Date().toLocaleString('ru-RU'),
+        screen: document.getElementById('screen2').classList.contains('show') ? 2 : 1
+      };
+
+      // Отправляем как GET-запрос с параметрами (самый надёжный способ)
+      const params = new URLSearchParams({
+        user: USER_ID,
+        button: buttonName,
+        time: data.time,
+        screen: data.screen
+      });
+
+      const url = WEBHOOK_URL + '?' + params.toString();
+
+      fetch(url, { mode: 'no-cors' })
+        .then(() => console.log('✅ Клик отправлен:', data))
+        .catch(err => console.log('❌ Ошибка отправки:', err));
+
+      // Дублируем локально на всякий случай
+      const log = JSON.parse(localStorage.getItem('clicks') || '[]');
+      log.push(data);
+      localStorage.setItem('clicks', JSON.stringify(log));
+    }
+
+    // ============================================================
+
+    const screen1 = document.getElementById('screen1');
+    const screen2 = document.getElementById('screen2');
+    const nextBtn = document.getElementById('nextBtn');
+    const envelope = document.getElementById('envelope');
+    const letterTitle = document.getElementById('letterTitle');
+    const hint = document.getElementById('hint');
+    const choiceButtons = document.getElementById('choiceButtons');
+    const btnWhen = document.getElementById('btnWhen');
+    const btnYes = document.getElementById('btnYes');
+    const btnNo = document.getElementById('btnNo');
+
+    const letterPaper = document.getElementById('letterPaper');
+    const letterHeading = document.getElementById('letterHeading');
+    const letterText = document.getElementById('letterText');
+    const letterSign = document.getElementById('letterSign');
+
+    // Ripple
+    function addRipple(button, e) {
+      const rect = button.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      const size = Math.max(rect.width, rect.height);
+      let x, y;
+      if (e.touches && e.touches.length) {
+        x = e.touches[0].clientX;
+        y = e.touches[0].clientY;
+      } else {
+        x = e.clientX;
+        y = e.clientY;
+      }
+      ripple.className = 'ripple';
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (x - rect.left - size / 2) + 'px';
+      ripple.style.top  = (y - rect.top  - size / 2) + 'px';
+      button.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    }
+
+    // Кнопка "Далее"
+    nextBtn.addEventListener('click', function(e) {
+      addRipple(nextBtn, e);
+      logClick('Далее');
+      screen1.classList.add('hide');
+      setTimeout(function() {
+        screen1.style.display = 'none';
+        screen2.classList.add('show');
+      }, 500);
+    });
+
+    // Открытие письма
+    envelope.addEventListener('click', function() {
+      if (envelope.classList.contains('opened')) return;
+      envelope.classList.add('opened');
+      logClick('Открыть письмо');
+
+      setTimeout(function() { envelope.classList.add('fade-out'); }, 2600);
+      setTimeout(function() { choiceButtons.classList.add('show'); }, 3800);
+
+      letterTitle.classList.add('hide');
+      hint.classList.add('hide');
+    });
+
+    // Ripple на всех кнопках
+    [btnWhen, btnYes, btnNo].forEach(function(btn) {
+      btn.addEventListener('click', function(e) { addRipple(btn, e); });
+    });
+
+    // Смена текста
+    function swapLetterText(heading, text, sign) {
+      letterPaper.classList.add('swap-out');
+      setTimeout(function() {
+        letterHeading.textContent = heading;
+        letterText.textContent = text;
+        letterSign.textContent = sign;
+
+        letterPaper.classList.remove('swap-out');
+        letterPaper.classList.add('swap-in');
+        setTimeout(function() {
+          letterPaper.classList.remove('swap-in');
+        }, 1500);
+      }, 500);
+    }
+
+    // Убрать кнопки навсегда
+    function hideButtonsForever() {
+      choiceButtons.classList.remove('show');
+      choiceButtons.classList.add('hide');
+      setTimeout(function() {
+        choiceButtons.classList.add('gone');
+      }, 700);
+    }
+
+    // Анимация "обновления" кнопок
+    function refreshButtons() {
+      choiceButtons.classList.remove('refresh');
+      void choiceButtons.offsetWidth;
+      choiceButtons.classList.add('refresh');
+      setTimeout(function() {
+        choiceButtons.classList.remove('refresh');
+      }, 900);
+    }
+
+    // ========== КНОПКА "КОГДА?" ==========
+    btnWhen.addEventListener('click', function() {
+      logClick('Когда?');
+      btnWhen.style.display = 'none';
+      btnYes.style.display = '';
+      btnNo.style.display = '';
+
+      swapLetterText(
+        'Текст 1 — заголовок',
+        'Текст 1 — основной текст (заменишь потом)',
+        '— Текст 1 — подпись'
+      );
+    });
+
+    // ========== СОСТОЯНИЕ ==========
+    let step = 0;
+
+    // ========== КНОПКА "ДА" ==========
+    btnYes.addEventListener('click', function() {
+      if (step === 0) {
+        logClick('Да (шаг 0)');
+        swapLetterText(
+          'Текст 2 — заголовок',
+          'Текст 2 — основной текст (нажал Да сразу)',
+          '— Текст 2 — подпись'
+        );
+        hideButtonsForever();
+      } else if (step === 1) {
+        logClick('Да (шаг 1)');
+        swapLetterText(
+          'Текст 5 — заголовок',
+          'Текст 5 — основной текст (нажал Да после Нет)',
+          '— Текст 5 — подпись'
+        );
+        step = 2;
+        setTimeout(function() { refreshButtons(); }, 1000);
+      } else if (step === 2) {
+        logClick('Да (шаг 2)');
+        swapLetterText(
+          'Текст 7 — заголовок',
+          'Текст 7 — основной текст (нажал Да после второго Нет)',
+          '— Текст 7 — подпись'
+        );
+        hideButtonsForever();
+      }
+    });
+
+    // ========== КНОПКА "НЕТ" ==========
+    btnNo.addEventListener('click', function() {
+      if (step === 0) {
+        logClick('Нет (шаг 0)');
+        swapLetterText(
+          'Текст 3 — заголовок',
+          'Текст 3 — основной текст (первый Нет)',
+          '— Текст 3 — подпись'
+        );
+        step = 1;
+        setTimeout(function() { refreshButtons(); }, 1000);
+      } else if (step === 1) {
+        logClick('Нет (шаг 1)');
+        swapLetterText(
+          'Текст 4 — заголовок',
+          'Текст 4 — основной текст (второй Нет)',
+          '— Текст 4 — подпись'
+        );
+        hideButtonsForever();
+      } else if (step === 2) {
+        logClick('Нет (шаг 2)');
+        swapLetterText(
+          'Текст 6 — заголовок',
+          'Текст 6 — основной текст (Нет после Да)',
+          '— Текст 6 — подпись'
+        );
+        hideButtonsForever();
+      }
+    });
+
+    // Отправляем факт открытия страницы
+    logClick('Открыл страницу');
+  </script>
+
+</body>
+</html>
